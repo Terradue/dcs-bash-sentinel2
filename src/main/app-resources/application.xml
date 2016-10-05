@@ -18,7 +18,7 @@
       </defaultJobconf>
     </jobTemplate>
   </jobTemplates>
-    <workflow id="sen2cor" title="Sentinel-2 Atmospheric Correction" abstract="DCS Application example written in Bash to process Sentinel-2 Atmospheric correction">
+    <workflow id="sen2cor" title="Sentinel-2 Atmospheric Correction" abstract="Application example written in Bash to process Sentinel-2 Atmospheric correction">
     <workflowVersion>1.0</workflowVersion>
     <node id="sen2cor_node">
       <job id="sen2cor"/>

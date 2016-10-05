@@ -1,6 +1,16 @@
-## Developer Cloud Sandbox <app-name> application  
+## Developer Cloud Sandbox Application for Sentinel-2 Atmospheric Correction
 
-Put here an introductory text describing the application.
+This processing services applies the SEN2COR atmospheric correction to Sentinel-2 Level 1C tiles. The inputs are thus Sentinel-2 products containing Top of Atmosphere reflectances (TOA) and the outputs are Sentinel-2 products containing the tiles covering the area of interest and containing Bottom of Atmosphere reflectances (BOA).
+
+SEN2COR is a prototype processor for Sentinel-2 Level 2A product formatting and processing. The processor performs the tasks of atmospheric-, terrain and cirrus correction and a scene classification of Level 1C input data.
+
+Sentinel-2 Level 2A outputs are:
+
+Bottom-Of-Atmosphere (BOA)
+optionally terrain- and cirrus corrected reflectance images
+Aerosol Optical Thickness
+Water Vapour
+Scene Classification maps and Quality Indicators, including cloud and snow probabilities.
 
 ## Quick link
  
