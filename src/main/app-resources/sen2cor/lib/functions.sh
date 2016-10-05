@@ -97,7 +97,8 @@ function get_data() {
   res=$?
   [ ${res} -ne 0 ] && return ${ERR_GETDATA}
  
-  unzip ${local_file} 1>&2 
+  unzip -qq -o ${local_file} -d ${target} 1>&2 
+  
   echo "${local_file}.SAFE"
 }
 
@@ -125,6 +126,7 @@ function sen2cor() {
   export PATH=/opt/anaconda/bin/:${PATH}
   export SEN2COR_BIN=/opt/anaconda/lib/python2.7/site-packages/sen2cor
   export SEN2COR_HOME=${TMPDIR}/sen2cor/
+  export GDAL_DATA=/opt/anaconda/share/gdal
   mkdir -p ${TMPDIR}/sen2cor/cfg
   
   cp ${SEN2COR_BIN}/cfg/L2A_GIPP.xml ${SEN2COR_HOME}/cfg
