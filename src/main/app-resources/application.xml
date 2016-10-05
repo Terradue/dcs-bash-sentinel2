@@ -13,6 +13,9 @@
           </options>
         </parameter>
       </defaultParameters>
+      <defaultJobconf>
+        <property id="mapred.task.timeout">3600000</property>
+      </defaultJobconf>
     </jobTemplate>
   </jobTemplates>
     <workflow id="sen2cor" title="Sentinel-2 Atmospheric Correction" abstract="DCS Application example written in Bash to process Sentinel-2 Atmospheric correction">
