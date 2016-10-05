@@ -8,5 +8,5 @@ trap cleanExit EXIT
 # line-by-line.
 while read input
 do
-  main || exit $?
+  main "${input}" || exit $?
 done
