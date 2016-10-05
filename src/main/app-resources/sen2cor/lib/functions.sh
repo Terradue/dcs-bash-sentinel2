@@ -3,6 +3,8 @@
 # define the exit codes
 SUCCESS=0
 ERR_PUBLISH=55
+ERR_DATA=56
+ERR_GDAL_TRANSLATE=57
 
 # source the ciop functions (e.g. ciop-log, ciop-getparam)
 source ${ciop_job_include}
@@ -12,6 +14,8 @@ source ${ciop_job_include}
 # Globals:
 #   SUCCESS
 #   ERR_PUBLISH
+#   ERR_DATA
+#   ERR_GDAL_TRANSLATE
 # Arguments:
 #   None
 # Returns:
@@ -24,6 +28,8 @@ function cleanExit ()
   case "${retval}" in
     ${SUCCESS}) msg="Processing successfully concluded";;
     ${ERR_PUBLISH}) msg="Failed to publish the results";;
+    ${ERR_DATA}) msg="Failed to get data";;
+    ${ERR_GDAL_TRANSLATE}) msg="Failed performing gdal_translate";;
     *) msg="Unknown error";;
   esac
 
@@ -48,7 +54,7 @@ function log_input()
 }
 
 ###############################################################################
-# Pass the input string to the next node, without storing it on HDFS
+# Publish data as result of the process, storing it on HDFS
 # Globals:
 #   None
 # Arguments:
@@ -57,10 +63,10 @@ function log_input()
 #   0 on success
 #   ERR_PUBLISH if something goes wrong 
 ###############################################################################
-function pass_next_node()
+function publish_data()
 {
-  local input=${1}
-  echo "${input}" | ciop-publish -s || return ${ERR_PUBLISH}
+  local output=${1}
+  ciop-publish -m ${output} || return ${ERR_PUBLISH}
 }
 
 ###############################################################################
@@ -75,8 +81,8 @@ function pass_next_node()
 ###############################################################################
 function get_data() {
  
-  local reference=$1
-  local target=$2
+  local reference=${1}
+  local target=${2}
   local local_file
   local enclosure
   local res
@@ -85,15 +91,64 @@ function get_data() {
   res=$?
   [ ${res} -ne 0 ] && ${ERR_GETDATA}
 
-  ciop-log "INFO" "[getData function] Data enclosure url: ${enclosure}"
-  
-  #TODO: activate uncompressing
-  
-  local_file="$( echo ${enclosure} | ciop-copy -f -U -O ${target} - 2> /dev/null )"
+  ciop-log "INFO" "[get_data function] Data enclosure url: ${enclosure}"
+    
+  local_file="$( echo ${enclosure} | ciop-copy -f -O ${target} - 2> /dev/null )"
   res=$?
   [ ${res} -ne 0 ] && return ${ERR_GETDATA}
     
   echo ${local_file}
+}
+
+###############################################################################
+# SEN2COR is a prototype processor for Sentinel-2 Level 2A product formatting 
+# and processing. The processor performs the tasks of atmospheric, terrain and
+# cirrus correction and a scene classification of Level 1C input data.
+# Globals:
+#   None
+# Arguments:
+#   product folder
+# Returns:
+#   0 on success
+#   ERR_DATA if something goes wrong
+###############################################################################
+function sen2cor() {
+
+  local reference=${1}
+  local product=${2}
+  
+  local resolution="$( ciop-getparam resolution)"
+  local identifier=$( opensearch-client -m EOP ${reference} identifier)
+  
+  # Setting sen2cor environment
+  export PATH=/opt/anaconda/bin/:${PATH}
+  export SEN2COR_BIN=/opt/anaconda/lib/python2.7/site-packages/sen2cor
+  export SEN2COR_HOME=${TMPDIR}/sen2cor/
+  mkdir -p ${TMPDIR}/sen2cor/cfg
+  
+  cp ${SEN2COR_BIN}/cfg/L2A_GIPP.xml ${SEN2COR_HOME}/cfg
+  cp ${SEN2COR_BIN}/cfg/L2A_CAL_AC_GIPP.xml $SEN2COR_HOME/cfg/
+  cp ${SEN2COR_BIN}/cfg/L2A_CAL_SC_GIPP.xml $SEN2COR_HOME/cfg/
+  
+  ciop-log "INFO" "[sen2cor function] Invoke SEN2COR L2A_Process"
+  
+  L2A_Process --resolution ${resolution} ${product} 2> /dev/null
+  
+  level_2a="$( echo ${identifier} | sed 's/OPER/USER/' | sed 's/MSIL1C/MSIL2A/' )" || level_2a="${identifier}"
+  
+  cd ${level_2a}.SAFE
+  metadata="$( find . -maxdepth 1 -name "S2A*.xml" )"
+  
+  subset=$( gdalinfo ${metadata} 2> /dev/null | grep -E  "SUBDATASET_._NAME" \
+       | grep "${resolution}m" | cut -d "=" -f 2 | while read subset )
+  
+  ciop-log "INFO" "Process ${subset}"
+  
+  gdal_translate \
+         ${subset} \
+         ${TMPDIR}/${level_2a}_${resolution}.TIF 1>&2 || return ${ERR_GDAL_TRANSLATE}
+
+  echo ${TMPDIR}/${level_2a}_${resolution}.TIF #.gz   
 }
 
 ###############################################################################
@@ -108,9 +163,22 @@ function get_data() {
 ###############################################################################
 function main()
 {
-  local input=${1}
-  # Log the input
-  log_input ${input}
-  # Just pass the input reference to the next node 
-  pass_next_node ${input}
+  local reference=${1}
+  
+  ciop-log "INFO" "**** Sentinel-2 Atmospheric Correction ****"
+  ciop-log "INFO" "------------------------------------------------------------"
+  ciop-log "INFO" "Input S-2 L1C product reference: ${ref}" 
+  ciop-log "INFO" "------------------------------------------------------------"
+
+  ciop-log "INFO" "STEP 1: Getting input product" 
+  local_product=$( get_data "${reference}" "${TMPDIR}" ) || return ${ERR_GET_DATA}
+  ciop-log "INFO" "------------------------------------------------------------"
+  
+  ciop-log "INFO" "STEP 2: SEN2COR tool"
+  output=$( sen2cor "${reference}" "${local_product}" )
+  ciop-log "INFO" "------------------------------------------------------------"
+  
+  ciop-log "INFO" "STEP 3: Publishing results"
+  publish_data "${output}"
+  ciop-log "INFO" "------------------------------------------------------------"
 }
