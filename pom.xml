@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.terradue</groupId>
+  <artifactId>dcs-bash-sentinel2</artifactId>
+  <packaging>pom</packaging>
+  <name>dcs-bash-sentinel2</name>
+  <parent>
+    <groupId>com.terradue</groupId>
+    <artifactId>dcs-bash-parent</artifactId>
+    <version>2.0.0</version>
+  </parent>
+  <description>DCS Application example written in Bash to process Sentinel-2 data</description>
+  <version>1.0-SNAPSHOT</version>
+  <properties>
+    <summary>DCS Bash Application for Sentinel-2</summary>
+    <description>DCS Application example written in Bash to process Sentinel-2 data</description>
+    <community>melodies</community>
+    <yumRepo>melodies</yumRepo>
+  </properties>
+  <scm>
+    <connection>scm:git:ssh://git@github.com/melodies/dcs-bash-sentinel2</connection>
+    <developerConnection>scm:git:ssh://git@github.com/melodies/dcs-bash-sentinel2</developerConnection>
+    <url>https://github.com/melodies/dcs-bash-sentinel2</url>
+    <tag>HEAD</tag>
+  </scm>
+  <profiles>
+    <profile>
+      <id>package-app</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>rpm-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>generate-rpm</id>
+                <goals>
+                  <goal>rpm</goal>
+                </goals>
+                <configuration>
+                  <!-- Set here the dependencies installed with 'sudo yum install'-->
+                  <requires>
+                    <require>bash</require>
+                  </requires>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>
