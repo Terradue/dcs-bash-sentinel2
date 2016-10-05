@@ -87,7 +87,7 @@ function get_data() {
   local enclosure
   local res
 
-  enclosure=$( opensearch-client "${reference}" enclosure )
+  enclosure=$( opensearch-client "${reference}&do=$HOSTNAME" enclosure )
   res=$?
   [ ${res} -ne 0 ] && ${ERR_GETDATA}
 
@@ -132,15 +132,15 @@ function sen2cor() {
   
   ciop-log "INFO" "[sen2cor function] Invoke SEN2COR L2A_Process"
   
-  L2A_Process --resolution ${resolution} ${product} 2> /dev/null
+  L2A_Process --resolution ${resolution} ${product} 1>&2
   
   level_2a="$( echo ${identifier} | sed 's/OPER/USER/' | sed 's/MSIL1C/MSIL2A/' )" || level_2a="${identifier}"
   
-  cd ${level_2a}.SAFE
+  cd ${TMPDIR}/${level_2a}.SAFE
   metadata="$( find . -maxdepth 1 -name "S2A*.xml" )"
   
   subset=$( gdalinfo ${metadata} 2> /dev/null | grep -E  "SUBDATASET_._NAME" \
-       | grep "${resolution}m" | cut -d "=" -f 2 | while read subset )
+       | grep "${resolution}m" | cut -d "=" -f 2 )
   
   ciop-log "INFO" "Process ${subset}"
   
@@ -148,7 +148,7 @@ function sen2cor() {
          ${subset} \
          ${TMPDIR}/${level_2a}_${resolution}.TIF 1>&2 || return ${ERR_GDAL_TRANSLATE}
 
-  echo ${TMPDIR}/${level_2a}_${resolution}.TIF #.gz   
+  echo ${TMPDIR}/${level_2a}_${resolution}.TIF   
 }
 
 ###############################################################################
