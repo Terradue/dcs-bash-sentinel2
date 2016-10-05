@@ -93,11 +93,12 @@ function get_data() {
 
   ciop-log "INFO" "[get_data function] Data enclosure url: ${enclosure}"
     
-  local_file="$( echo ${enclosure} | ciop-copy -f -O ${target} - 2> /dev/null )"
+  local_file="$( echo ${enclosure} | ciop-copy -U -f -O ${target} - 2> /dev/null )"
   res=$?
   [ ${res} -ne 0 ] && return ${ERR_GETDATA}
-    
-  echo ${local_file}
+ 
+  unzip ${local_file} 1>&2 
+  echo "${local_file}.SAFE"
 }
 
 ###############################################################################
