@@ -167,7 +167,7 @@ function main()
   
   ciop-log "INFO" "**** Sentinel-2 Atmospheric Correction ****"
   ciop-log "INFO" "------------------------------------------------------------"
-  ciop-log "INFO" "Input S-2 L1C product reference: ${ref}" 
+  ciop-log "INFO" "Input S-2 L1C product reference: ${reference}" 
   ciop-log "INFO" "------------------------------------------------------------"
 
   ciop-log "INFO" "STEP 1: Getting input product" 
