@@ -4,7 +4,7 @@
     <jobTemplate id="sen2cor">
       <streamingExecutable>/application/sen2cor/run.sh</streamingExecutable>
       <defaultParameters>
-        <parameter id="resolution" scope="runtime" maxOccurs="1" title="Resolution for Sentinel-2 Level-2A product in meters (10, 20 or 60)" abstract="Resolution for Sentinel-2 Level-2A product in meters (10, 20 or 60). The bands are resampled to the selceted target resolution">
+        <parameter id="resolution" scope="runtime" maxOccurs="1" title="Resolution for Sentinel-2 Level-2A product in meters (10, 20 or 60)" abstract="Resolution for Sentinel-2 Level-2A product in meters (10, 20 or 60). The bands are resampled to the selected target resolution">
           <options>
             <option>10</option>
             <option>20</option>
@@ -15,7 +15,7 @@
       </defaultParameters>
     </jobTemplate>
   </jobTemplates>
-    <workflow id="workflow" title="Simple workflow" abstract="Simple workflow based on the DCS Bash archetype">
+    <workflow id="sen2cor" title="Sentinel-2 Atmospheric Correction" abstract="DCS Application example written in Bash to process Sentinel-2 Atmospheric correction">
     <workflowVersion>1.0</workflowVersion>
     <node id="sen2cor_node">
       <job id="sen2cor"/>
