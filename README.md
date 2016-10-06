@@ -103,4 +103,4 @@ Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/L
 
 ### <a name="funding"></a>Funding
 
-Put here any information about the funding.
+This work has received funding from the European Union’s Seventh Programme for research, technological development and demonstration under grant agreement number 603525.
