@@ -1,18 +1,17 @@
-## Developer Cloud Sandbox Application for Sentinel-2 Atmospheric Correction
+# DCS Bash Application for Sentinel-2 Atmospheric Correction
 
 This processing services applies the SEN2COR atmospheric correction to Sentinel-2 Level 1C tiles. The inputs are thus Sentinel-2 products containing Top of Atmosphere reflectances (TOA) and the outputs are Sentinel-2 products containing the tiles covering the area of interest and containing Bottom of Atmosphere reflectances (BOA).
 
-SEN2COR is a prototype processor for Sentinel-2 Level 2A product formatting and processing. The processor performs the tasks of atmospheric-, terrain and cirrus correction and a scene classification of Level 1C input data.
+SEN2COR is a prototype processor for Sentinel-2 Level 2A product formatting and processing. The processor performs the tasks of atmospheric, terrain and cirrus correction and a scene classification of Level 1C input data.
 
 Sentinel-2 Level 2A outputs are:
 
-Bottom-Of-Atmosphere (BOA)
-optionally terrain- and cirrus corrected reflectance images
-Aerosol Optical Thickness
-Water Vapour
-Scene Classification maps and Quality Indicators, including cloud and snow probabilities.
+* Bottom-Of-Atmosphere (BOA), optionally terrain and cirrus corrected reflectance images
+* Aerosol Optical Thickness
+* Water Vapour
+* Scene Classification maps and Quality Indicators, including cloud and snow probabilities.
 
-## Quick link
+## Quick links
  
 * [Getting Started](#getting-started)
 * [Installation](#installation)
@@ -23,7 +22,7 @@ Scene Classification maps and Quality Indicators, including cloud and snow proba
 * [License](#license)
 * [Funding](#funding)
 
-### <a name="getting-started"></a>Getting Started 
+## <a name="getting-started"></a>Getting Started 
 
 To run this application you will need a Developer Cloud Sandbox that can be requested at support (at) terradue.com
 
@@ -32,45 +31,48 @@ The virtual machine runs in two different lifecycle modes: Sandbox mode and Clus
 Used in Sandbox mode (single virtual machine), it supports cluster simulation and user assistance functions in building the distributed application.
 Used in Cluster mode (a set of master and slave nodes), it supports the deployment and execution of the application with the power of distributed computing for data processing over large datasets (leveraging the Hadoop Streaming MapReduce technology). 
 
-### <a name="installation"></a>Installation
+## <a name="installation"></a>Installation
 
-#### Pre-requisites
+### Pre-requisites
 
-Put here the requirements of the application in terms of software packages. For example:
+The requirements of the this application are:
 
-* snap
-* idl
+* miniconda
+* openjpeg2
+* gdal
+* sen2cor
 
 To install these packages, run the simple steps below on the Developer Cloud Sandbox shell:
 
 ```bash
-sudo yum install -y snap
-sudo yum install -y idl
+sudo yum install -y miniconda openjpeg2
+sudo conda install -y gdal sen2cor
 ```
 
-##### Using the releases
-
-Log on the Developer Cloud Sandbox.
-
-Install the package by running this command in a shell:
-
-```bash
-sudo yum -y install <app-name>
-```
-
-> At this stage there are no releases yet
-
-#### Using the development version
+### Using the development version
 
 Install the pre-requisites as instructed above.
 
 Log on the Developer Cloud Sandbox and run these commands in a shell:
 
 ```bash
-git clone <app-url>
-cd <app-name>
+cd
+git clone https://github.com/ec-melodies/dcs-bash-sentinel2.git
+cd dcs-bash-sentinel2
 mvn install
 ```
+
+### Using the release version
+
+Log on the Developer Cloud Sandbox.
+
+Install the package by running this command in a shell:
+
+```bash
+sudo yum -y install dcs-bash-sentinel2
+```
+
+> At this stage there are no releases yet
 
 ### <a name="submit"></a>Submitting the workflow
 
@@ -89,11 +91,11 @@ To learn more and find information go to
 
 ### <a name="authors"></a>Authors (alphabetically)
 
-* Author
+* Cesare Rossi
 
 ### <a name="questions"></a>Questions, bugs, and suggestions
 
-Please file any bugs or questions as [issues](<app-url>) or send in a pull request if you corrected any.
+Please file any bugs or questions as [issues](https://github.com/ec-melodies/dcs-bash-sentinel2/issues) or send in a pull request if you corrected any.
 
 ### <a name="license"></a>License
 

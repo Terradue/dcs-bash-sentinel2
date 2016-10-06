@@ -5,6 +5,7 @@ SUCCESS=0
 ERR_PUBLISH=55
 ERR_DATA=56
 ERR_GDAL_TRANSLATE=57
+ERR_SEN2COR=58
 
 # source the ciop functions (e.g. ciop-log, ciop-getparam)
 source ${ciop_job_include}
@@ -30,6 +31,7 @@ function cleanExit ()
     ${ERR_PUBLISH}) msg="Failed to publish the results";;
     ${ERR_DATA}) msg="Failed to get data";;
     ${ERR_GDAL_TRANSLATE}) msg="Failed performing gdal_translate";;
+    ${ERR_SEN2COR}) msg="Failed performing sen2cor";;
     *) msg="Unknown error";;
   esac
 
@@ -178,10 +180,10 @@ function main()
   ciop-log "INFO" "------------------------------------------------------------"
   
   ciop-log "INFO" "STEP 2: SEN2COR tool"
-  output=$( sen2cor "${reference}" "${local_product}" )
+  output=$( sen2cor "${reference}" "${local_product}" ) || return ${ERR_GET_DATA}
   ciop-log "INFO" "------------------------------------------------------------"
   
   ciop-log "INFO" "STEP 3: Publishing results"
-  publish_data "${output}"
+  publish_data "${output}" || return ${ERR_PUBLISH}
   ciop-log "INFO" "------------------------------------------------------------"
 }
