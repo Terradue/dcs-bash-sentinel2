@@ -23,7 +23,7 @@
     <node id="sen2cor_node">
       <job id="sen2cor"/>
       <sources>
-        <source id="source" title="Sentinel-2 L1C" abstract="List of Sentinel-2 L1C product references" refid="string:list" scope="runtime">https://catalog.terradue.com/sentinel2/search?uid=S2A_OPER_PRD_MSIL1C_PDMC_20161003T090023_R117_V20161003T015622_20161003T015616</source>
+        <source id="source" title="Sentinel-2 L1C" abstract="List of Sentinel-2 L1C product references" refid="string:list" scope="runtime">https://catalog.terradue.com/sentinel2/search?uid=S2A_OPER_PRD_MSIL1C_PDMC_20161001T163631_R094_V20161001T105842_20161001T105845</source>
       </sources>
     </node>
   </workflow>
