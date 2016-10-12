@@ -14,12 +14,16 @@ remote_catalog=catalog.terradue.com
 index=melodies-training
 base_url="https://${remote_catalog}/${index}"
 
+echo "(1/3) Getting the metadata file from the local Sandbox Catalogue"
+
 # Get the local atom response
 xml=/tmp/atom.$$.xml
 opensearch-client -m EOP "http://$HOSTNAME/sbws/wps/sen2cor/${WORKFLOW}/results/search" {} > ${xml}
 
 # Compute the identifier of the entry
 identifier=$( xmlstarlet sel -N x="http://www.w3.org/2005/Atom" -N y="http://purl.org/dc/elements/1.1/" -t -v "/x:feed/x:entry/y:identifier" ${xml})
+
+echo "(2/3) Setting the new metadata (e.g., enclosure, offering, index)"
 
 # Update the atom values
 xmlstarlet ed -L -N x="http://www.w3.org/2005/Atom" -u "/x:feed/x:link[@rel='alternate']/@href" -v "${base_url}/?count=20&amp;format=atom" ${xml}
@@ -36,7 +40,17 @@ layer_id="${index}:${USER}-${HOSTNAME}-${identifier}"
 wms="http://geoserver-melodies.terradue.com/geoserver/melodies-training/wms?service=WMS&version=1.1.0&request=GetMap&layers=${layer_id}&styles=&bbox=300000.0,6490200.0,409800.0,6600000.0&width=768&height=768&srs=EPSG:32632&format=image%2Fpng"
 xmlstarlet ed -L -N x="http://www.w3.org/2005/Atom" -N y="http://www.opengis.net/owc/1.0" -u "/x:feed/x:entry/y:offering/y:content/@href" -v "${wms}" ${xml}
 
+echo "(3/3) Uploading the metadata file to the Data Agency Catalogue"
+
 # Finally upload the entry
 curl -u ${USER}:${APIKEY} -XPOST -H "Content-Type: application/atom+xml" -d@${xml} "https://catalog.terradue.com/${index}"
 
-exit 0
+res=$?
+
+if [ ${res} -eq 0 ]; then
+  echo "DONE: Ingestion successfully performed !"
+else
+  echo "Oups, sorry something went wrong. Please verify with your instructor."
+fi
+
+exit ${res}
