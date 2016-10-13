@@ -48,8 +48,10 @@ curl -u ${USER}:${APIKEY} -XPOST -H "Content-Type: application/atom+xml" -d@${xm
 res=$?
 
 if [ ${res} -eq 0 ]; then
+  echo ""
   echo "DONE: Ingestion successfully performed !"
 else
+  echo ""
   echo "Oups, sorry something went wrong. Please verify with your instructor."
 fi
 
