@@ -37,8 +37,7 @@ xmlstarlet ed -L -N x="http://www.w3.org/2005/Atom" -N y="http://purl.org/dc/ele
 
 # Set properly the WMS offering
 layer_id="${index}:${USER}-${HOSTNAME}-${identifier}"
-wms="http://geoserver.melodies.terradue.int/geoserver/melodies-training/wms?service=WMS&version=1.1.0&request=GetMap&layers=${layer_id}&styles=&bbox=300000.0,6490200.0,409800.0,6600000.0&width=768&height=768&srs=EPSG:32632&format=image%2Fpng"
-xmlstarlet ed -L -N x="http://www.w3.org/2005/Atom" -N y="http://www.opengis.net/owc/1.0" -u "/x:feed/x:entry/y:offering/y:content/@href" -v "${wms}" ${xml}
+xmlstarlet ed -L -N x="http://www.w3.org/2005/Atom" -N y="http://www.opengis.net/owc/1.0" -u "/x:feed/x:entry/y:offering/y:content/@href" -v "https://store.terradue.com/${index}/${USER}/${identifier}" ${xml}
 
 echo "(3/3) Uploading the metadata file to the Data Agency Catalogue"
 
