@@ -101,7 +101,7 @@ function get_data() {
  
   unzip -qq -o ${local_file} -d ${target} 1>&2 
   
-  echo "${local_file}.SAFE"
+  echo "${local_file%.zip}.SAFE"
 }
 
 ###############################################################################
